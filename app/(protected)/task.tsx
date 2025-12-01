@@ -11,9 +11,12 @@ import {
     Modal,
 } from 'react-native';
 import { Plus, Trash2, Edit, X } from 'lucide-react-native';
-import { TasksService } from '@/services/tasksService';
+import { tasksService, TasksService } from '@/services/tasksService';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function TaskScreen() {
+    const { colors } = useTheme();
     const [dataTasks, setDataTasks] = useState<any>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
@@ -36,7 +39,10 @@ export default function TaskScreen() {
         setLoading(true);
         try {
             // Simulasi fetch data - ganti dengan TasksService.getTasks()
-            const mockTasks:any = await TasksService.getTasks();
+            const mockTasks:any = await tasksService.getTasks();
+
+            console.log(mockTasks, "mockTasks ==");
+            
             setDataTasks(mockTasks);
         } finally {
             setLoading(false);
@@ -99,14 +105,14 @@ export default function TaskScreen() {
                 };
 
                 // Update di service
-                // await TasksService.updateTask(editingTask.id, updatedTask);
-
+                await tasksService.updateTask(editingTask.id, updatedTask);
+                fetchData();
                 // Update state local
-                setDataTasks((prevTasks:any) =>
-                    prevTasks.map((task:any) =>
-                        task.id === editingTask.id ? updatedTask : task
-                    )
-                );
+                // setDataTasks((prevTasks:any) =>
+                //     prevTasks.map((task:any) =>
+                //         task.id === editingTask.id ? updatedTask : task
+                //     )
+                // );
 
                 Alert.alert('Success', 'Task updated successfully!');
             } else {
@@ -122,10 +128,10 @@ export default function TaskScreen() {
                 };
 
                 // Save di service
-                // await TasksService.createTask(newTask);
-
+                await tasksService.createTask(newTask);
+                fetchData();
                 // Update state local
-                setDataTasks((prevTasks:any) => [...prevTasks, newTask]);
+                // setDataTasks((prevTasks:any) => [...prevTasks, newTask]);
 
                 Alert.alert('Success', 'Task added successfully!');
             }
@@ -161,12 +167,12 @@ export default function TaskScreen() {
                     onPress: async () => {
                         try {
                             // Delete di service
-                            // await TasksService.deleteTask(taskId);
-
+                            await tasksService.deleteTask(taskId);
+                            fetchData();
                             // Update state local
-                            setDataTasks((prevTasks:any) =>
-                                prevTasks.filter((task:any) => task.id !== taskId)
-                            );
+                            // setDataTasks((prevTasks:any) =>
+                            //     prevTasks.filter((task:any) => task.id !== taskId)
+                            // );
 
                             Alert.alert('Success', 'Task deleted successfully!');
                         } catch (error) {
@@ -212,6 +218,8 @@ export default function TaskScreen() {
     };
 
     const getPriorityColor:any = (priority:any) => {
+        console.log(priority, "isi priority");
+        
         switch (priority) {
             case 'high':
                 return 'bg-red-100 text-red-700';
@@ -223,12 +231,15 @@ export default function TaskScreen() {
     };
 
     const filteredTasks = dataTasks.filter((task:any) =>
-        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        task.description.toLowerCase().includes(searchQuery.toLowerCase())
+    task?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    task?.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // console.log(filteredTasks, "isi filter Tasks");
+    
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             {/* Search Bar */}
             <View style={styles.searchContainer}>
                 <TextInput
@@ -247,24 +258,17 @@ export default function TaskScreen() {
                 }
             >
                 <View style={{ marginTop: 16, gap: 8 }}>
-                    {filteredTasks.length === 0 ? (
-                        <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No tasks found</Text>
-                            <Text style={styles.emptySubtext}>
-                                {searchQuery ? 'Try different keywords' : 'Create your first task'}
-                            </Text>
-                        </View>
-                    ) : (
-                        filteredTasks.map((task:any) => (
-                            <View key={task.id} style={styles.taskCard}>
+                    {filteredTasks?.map((task:any, index:number) => (
+                         <View key={index} style={styles.taskCard}>
+                               {/* <Text>{task?.title}</Text> */}
                                 <View style={styles.taskHeader}>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={styles.taskTitle}>{task.title}</Text>
+                                        <Text style={styles.taskTitle}>{task?.title}</Text>
                                         <Text style={styles.taskDescription}>
-                                            {task.description}
+                                            {task?.description}
                                         </Text>
                                     </View>
-                                    <View style={styles.actionButtons}>
+                            <View style={styles.actionButtons}>
                                         <TouchableOpacity
                                             onPress={() => openEditModal(task)}
                                             style={styles.iconButton}
@@ -282,34 +286,30 @@ export default function TaskScreen() {
 
                                 <View style={styles.taskFooter}>
                                     <View style={{ flexDirection: 'row', gap: 8, flex: 1 }}>
-                                        <View style={[styles.priorityBadge, getPriorityColor(task.priority)]}>
+                                         <View className={getPriorityColor(task.priority)} style={[styles.priorityBadge]}>
                                             <Text style={[styles.badgeText, { textTransform: 'capitalize' }]}>
-                                                {task.priority}
+                                                {task?.priority}
                                             </Text>
                                         </View>
                                         <TouchableOpacity
                                             onPress={() => handleToggleStatus(task)}
-                                            style={styles.statusBadge}
-                                        >
+                                            style={styles.statusBadge}>
                                             <Text
-                                                style={[
-                                                    styles.statusText,
-                                                    getStatusColor(task.status)
-                                                ]}
-                                            >
+                                              className={getStatusColor(task.status)}
+                                                style={[styles.statusText]}>
                                                 {task.status.replace('-', ' ')}
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
-                                    {task.dueDate && (
+                                    {task?.dueDate && (
                                         <Text style={styles.dueDate}>
-                                            Due: {new Date(task.dueDate).toLocaleDateString()}
+                                            Due: {new Date(task?.dueDate).toLocaleDateString()}
                                         </Text>
                                     )}
                                 </View>
                             </View>
-                        ))
-                    )}
+                            
+                    ))}
                 </View>
             </ScrollView>
 
@@ -471,6 +471,7 @@ export default function TaskScreen() {
                 <Plus size={32} color="#FFFFFF" strokeWidth={2.5} />
             </TouchableOpacity>
         </View>
+        </SafeAreaView>
     );
 }
 
@@ -526,9 +527,13 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     iconButton: {
-        padding: 8,
+        // padding: 8,
         borderRadius: 8,
         backgroundColor: '#f3f4f6',
+        height: 32,
+        width: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     taskFooter: {
         flexDirection: 'row',

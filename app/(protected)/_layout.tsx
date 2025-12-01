@@ -24,6 +24,7 @@ export default function MainLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
+          display: 'none',
           backgroundColor: colors.card || colors.background,
           borderTopColor: colors.border,
           borderTopWidth: 1,
@@ -48,7 +49,7 @@ export default function MainLayout() {
       }}
     > 
 
-          <Tabs.Screen
+    <Tabs.Screen
         name="task"
         options={{
           title: 'Tasks',
@@ -63,7 +64,7 @@ export default function MainLayout() {
         }}
       />
 
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
@@ -91,7 +92,7 @@ export default function MainLayout() {
             </View>
           ),
         }}
-      />
+      /> */}
     </Tabs>
   );
 }

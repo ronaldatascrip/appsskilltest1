@@ -14,8 +14,6 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(protected)" />
-            <Stack.Screen name="(admin)" />
-            {/* <Stack.Screen name="report" /> */}
           </Stack>
           <Toast config={toastConfig} />
         </AuthProvider>
