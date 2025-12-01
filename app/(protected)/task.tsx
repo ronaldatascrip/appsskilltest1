@@ -11,7 +11,7 @@ import {
     Modal,
 } from 'react-native';
 import { Plus, Trash2, Edit, X } from 'lucide-react-native';
-import { tasksService, TasksService } from '@/services/tasksService';
+import { tasksService } from '@/services/tasksService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -258,7 +258,16 @@ export default function TaskScreen() {
                 }
             >
                 <View style={{ marginTop: 16, gap: 8 }}>
-                    {filteredTasks?.map((task:any, index:number) => (
+                     {filteredTasks.length === 0 ? (
+                       <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyText}>No tasks found</Text>
+                            <Text style={styles.emptySubtext}>
+                                {searchQuery ? 'Try different keywords' : 'Create your first task'}
+                            </Text>
+                        </View>
+                     ):(
+                       <>
+                       {filteredTasks?.map((task:any, index:number) => (
                          <View key={index} style={styles.taskCard}>
                                {/* <Text>{task?.title}</Text> */}
                                 <View style={styles.taskHeader}>
@@ -310,6 +319,9 @@ export default function TaskScreen() {
                             </View>
                             
                     ))}
+                       </>
+                     )}
+                    
                 </View>
             </ScrollView>
 
