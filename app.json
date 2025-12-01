@@ -24,7 +24,7 @@
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.m-jobsekeer.app",
+      "package": "com.setiawanutsman.mjobsekeer",
       "versionCode": 1
     },
     "web": {
@@ -46,8 +46,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": ""
-      }
+        "projectId": "7959c404-c2af-45a4-8d86-3896cd89f358"
+      },
+      "router": {}
     },
     "updates": {
       "enabled": true,
