@@ -10,6 +10,8 @@ export default function AuthLayout() {
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
       router.replace('/(protected)/task'); // atau '/(tabs)' kalau kamu pakai tab navigation
+    } else{
+      router.replace('/(auth)/login');
     }
   }, [isLoading, isAuthenticated]);
 
