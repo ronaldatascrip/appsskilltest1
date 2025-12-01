@@ -2,6 +2,10 @@
 
 A comprehensive, production-ready boilerplate for building React Native applications with Expo. Features authentication, theming, clean architecture, and full TypeScript support.
 
+Untuk apk ada di folde
+```bash
+ apk/apk-release-v1.0.0
+```
 ## Documentation
 
 This project includes comprehensive documentation for AI agents and developers:
